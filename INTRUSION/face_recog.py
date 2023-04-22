@@ -19,26 +19,32 @@ def faceRecog():
     detection = False
 
     video_capture = cv2.VideoCapture(0)
+    
+    face_encs = []
+    face_names = []
 
     # Load a sample picture and learn how to recognize it.
     for filename in os.listdir(directory):
-        face_enc_cnt = 0
         f = os.path.join(directory,filename)
-        face_recognition.load_image_file(f)
+        faceImg = face_recognition.load_image_file(f)
+        faceEnc = face_recognition.face_encodings(faceImg)[0]
+        face_encs.append(faceEnc)
 
     with open("userList.json",'r') as f:
         userData = json.loads(f.read())
+        for i in userData:
+            face_names.append(i)
 
-    darren_faceImg = face_recognition.load_image_file("../INTRUSION/Images/darren.jpg")
-    darren_face_Enc = face_recognition.face_encodings(darren_faceImg)[0]
+    # darren_faceImg = face_recognition.load_image_file("../INTRUSION/Images/darren.jpg")
+    # darren_face_Enc = face_recognition.face_encodings(darren_faceImg)[0]
 
     # Create arrays of known face encodings and their names
-    known_face_encodings = [
-        darren_face_Enc
-    ]
-    known_face_names = [
-        "Darren Goh"
-    ]
+    # face_encs = [
+    #     darren_face_Enc
+    # ]
+    # face_names = [
+    #     "Darren Goh"
+    # ]
 
     while True:
         # Grab a single frame of video
@@ -51,12 +57,12 @@ def faceRecog():
         # Loop through each face in this frame of video
         for (top, right, bottom, left), face_encoding in zip(face_locations, face_encodings):
             # See if the face is a match for the known face(s)
-            matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+            matches = face_recognition.compare_faces(face_encs, face_encoding)
 
-            # If a match was found in known_face_encodings, just use the first one.
+            # If a match was found in face_encs, just use the first one.
             if True in matches:
                 first_match_index = matches.index(True)
-                name = known_face_names[first_match_index]
+                name = face_names[first_match_index]
                 detection = True
                 
             if False in matches:
