@@ -23,10 +23,6 @@ def faceRecog():
     face_encs = []
     face_names = []
 
-    # Load a sample picture and learn how to recognize it.
-    # for filename in os.listdir(directory):
-    #     f = os.path.join(directory,filename)
-
     # sorting paths by creation date
     sortedPath = sorted(Path(directory).iterdir(),key=os.path.getctime)
     print(sortedPath)
@@ -43,17 +39,6 @@ def faceRecog():
         for i in userData:
             face_names.append(i)
         print(face_names)
-
-    # darren_faceImg = face_recognition.load_image_file("../INTRUSION/Images/darren.jpg")
-    # darren_face_Enc = face_recognition.face_encodings(darren_faceImg)[0]
-
-    # Create arrays of known face encodings and their names
-    # face_encs = [
-    #     darren_face_Enc
-    # ]
-    # face_names = [
-    #     "Darren Goh"
-    # ]
 
     while True:
         # Grab a single frame of video

@@ -4,16 +4,14 @@ import face_recog
 
 spchAuthFxCnt = 0
 
-# Function to convert text to
-# speech
-
+# convert text to speech
 def SpeakText(command):
-     
     # Initialize the engine
     engine = pyttsx3.init()
     engine.say(command)
     engine.runAndWait()
 
+# transcribes and verifies spoken code
 def codeVerify():
 
     global spchSuccess
