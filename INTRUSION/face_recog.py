@@ -27,7 +27,7 @@ def faceRecog():
     sortedPath = sorted(Path(directory).iterdir(),key=os.path.getctime)
     print(sortedPath)
 
-    # load the sorted paths
+    # load the sorted paths for encoding list
     for sortedFiles in sortedPath: 
         faceImg = face_recognition.load_image_file(sortedFiles)
         faceEnc = face_recognition.face_encodings(faceImg)[0]
