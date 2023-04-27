@@ -1,22 +1,30 @@
 import face_recognition
 import cv2
-import numpy as np
 import os
 import json
 from pathlib import Path
+from datetime import datetime
 
 AuthFailCount = 0
 
 def faceRecog():
+    now = datetime.now()
+    date_time = now.strftime("%m%d%Y_%H%M%S")
     directory = '../INTRUSION/INTRUSION/Images/'
 
     global detection
     global name
     global AuthFail
     global AuthFailCount
+    global intruderFlag
+    global intruders
+    global intruderFlag_DT
 
+    intruderFlag = False
     AuthFail = False
     detection = False
+
+    flag_dt_format = now.strftime("%m/%d/%Y, %H:%M:%S")
 
     video_capture = cv2.VideoCapture(0)
     
@@ -95,6 +103,16 @@ def faceRecog():
             print("AuthFail. Unauthorized User.")
             AuthFailCount += 1
             print("Number of tries: ", AuthFailCount)
+            if AuthFailCount >2:
+                intruderFlag = True
+                intruderFlag_DT = flag_dt_format
+                print("Capturing Intruder Image")
+                cv2.imshow('Intruder', frame)
+                intruders = "../INTRUSION/INTRUSION/IntruderImgs/intruder_flag_{}.png".format(date_time)
+                cv2.imwrite(intruders, frame)
+                print("{} captured".format(intruders))
+
+                return intruderFlag
             break
 
     # Release handle to the webcam
