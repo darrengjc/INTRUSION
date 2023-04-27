@@ -23,7 +23,7 @@ def faceRecog():
     intruderFlag = False
     AuthFail = False
     detection = False
-
+    intruders = []
     flag_dt_format = now.strftime("%m/%d/%Y, %H:%M:%S")
 
     video_capture = cv2.VideoCapture(0)
@@ -107,11 +107,10 @@ def faceRecog():
                 intruderFlag = True
                 intruderFlag_DT = flag_dt_format
                 print("Capturing Intruder Image")
-                cv2.imshow('Intruder', frame)
-                intruders = "../INTRUSION/INTRUSION/IntruderImgs/intruder_flag_{}.png".format(date_time)
-                cv2.imwrite(intruders, frame)
+                newIntruder = "../INTRUSION/INTRUSION/IntruderImgs/intruder_flag_{}.png".format(date_time)
+                intruders.append(newIntruder)
+                cv2.imwrite(newIntruder, frame)
                 print("{} captured".format(intruders))
-
                 return intruderFlag
             break
 

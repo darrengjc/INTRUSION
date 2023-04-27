@@ -3,6 +3,7 @@ import face_recog
 import face_register
 import speech_recog
 import json
+import alert
 
 # set main theme
 customtkinter.set_appearance_mode("dark")  
@@ -48,6 +49,7 @@ def frcButton_callback():
             intro_label.configure(text="INTRUDER DETECTED")
             spchButton.pack_forget()
             frcButton.pack_forget()
+            alert.app.run()
 
 # speech button callback: Run when speech button is clicked.
 def spchButton_callback():
