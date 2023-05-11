@@ -7,15 +7,56 @@ import alert
 import threading
 from plyer import notification
 from pushbullet import Pushbullet
+from cryptography.fernet import Fernet
+import os
 
+#push bullet user APi and initializer
 access_token = "o.Go4S3Kfaf4WpG8m09MxEdpec7fYadQ6j"
-
 pb = Pushbullet(access_token)
+
+def keySet():
+#fernet key generation for encryption setting
+    key = Fernet.generate_key()
+    with open("../INTRUSION/INTRUSION/encKey.key", "wb") as keyFile:
+            keyFile.write(key)
+
+def keyLoad():
+    return open("../INTRUSION/INTRUSION/encKey.key", "rb").read()
+
+def encryptFile(key):
+    encKey = Fernet(key)
+    with open("../INTRUSION/INTRUSION/userList.json", "rb") as file:
+        # read all file data
+        file_data = file.read()
+
+    encrypted_data = encKey.encrypt(file_data)
+    with open("../INTRUSION/INTRUSION/encryptedList.json", "wb") as file:
+        file.write(encrypted_data)
+
+def decryptFile(key):
+    dncKey = Fernet(key)
+    with open("../INTRUSION/INTRUSION/encryptedList.json", "rb") as file:
+    # read the encrypted data
+        encrypted_data = file.read()
+    # decrypt data
+    decrypted_data = dncKey.decrypt(encrypted_data)
+    # write the original file
+    with open("../INTRUSION/INTRUSION/userList.json", "wb") as file:
+        file.write(decrypted_data)
+
+def destroyUsrLst():
+    if os.path.exists("../INTRUSION/INTRUSION/userList.json"):
+        os.remove("../INTRUSION/INTRUSION/userList.json")
+#keySet()
+key = keyLoad()
+# decryptFile(key)
+# encryptFile(key)
+# exit()
 
 # import webbrowser
 # new = 2
 
-###1 spoken code can be a random weekly generation code. Sent to user via sms every week.
+###1 spoken code can be a random weekly generation code. Sent to user via phone notification every week.
 ###2 Add cryptographic encryption to json file 
 ##https://towardsdatascience.com/encrypt-and-decrypt-files-using-python-python-programming-pyshark-a67774bbf9f4
 ###3 optional add machine learning to voice recognition
@@ -64,10 +105,13 @@ def frcButton_callback():
             intro_label.configure(text="INTRUDER DETECTED")
             spchButton.pack_forget()
             frcButton.pack_forget()
+
             # url = "file:///E:/SIM/Y3S2/INTRUSION/INTRUSION/alert.html"
             # webbrowser.open(url,new=new)
+
             # call alert app as thread so we can parallel process the two programs
             threading.Thread(target=lambda: alert.app.run(debug=False, use_reloader=False)).start()
+
             # throw desktop notification
             notification.notify(
                 title = 'Intruder Detected',
@@ -75,6 +119,7 @@ def frcButton_callback():
                 app_icon = None,
                 timeout = 10,
             )
+            #throw phone notification
             pb.push_note("INTRUDER ALERT", face_recog.intruderFlag_DT)
 
 # speech button callback: Run when speech button is clicked.
@@ -109,14 +154,13 @@ def spchButton_callback():
 # login button callback: Run when login button is clicked.
 def login_callback():
     print("password entered", pass_entry.get())
-
+    decryptFile(key)
+    
     uf = open("../INTRUSION/INTRUSION/userList.json")
-
     # load passes from json
     userData = json.load(uf)
     userPasses = userData.values()
     entered_pass = pass_entry.get()
-
     # check if pass is valid
     if entered_pass in userPasses:
         pass_entry.pack_forget()
@@ -178,7 +222,7 @@ def face_regis_callback():
 
 # submit button callback: Run when submit registration button is clicked.
 def submit_regis_callback():
-
+    decryptFile(key)
     # save the user input fields into json file
     with open("../INTRUSION/INTRUSION/userList.json",'r') as f:
         userData = json.loads(f.read())
@@ -188,6 +232,7 @@ def submit_regis_callback():
     with open("../INTRUSION/INTRUSION/userList.json", 'w') as f:
         f.write(json.dumps(userData,sort_keys=False, indent=4, separators=(',', ': ')))
 
+    encryptFile(key)
     customtkinter.set_appearance_mode("light")
 
     mainWindow.geometry("400x400")
@@ -249,4 +294,6 @@ response_entry.pack(pady=10, padx=10)
 
 # initialize main
 if __name__=='__main__':
+    destroyUsrLst()
     mainWindow.mainloop()
+    destroyUsrLst()

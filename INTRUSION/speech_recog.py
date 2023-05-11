@@ -1,6 +1,7 @@
 import speech_recognition as sr
 import pyttsx3
 import face_recog
+from datetime import datetime
 
 spchAuthFxCnt = 0
 
@@ -18,10 +19,16 @@ def codeVerify():
     global spchAuthSx
     global spchAuthFx
     global spchAuthFxCnt
+    global intruderFlag_DT
+    global intruderFlag
 
     spchSuccess = False
     spchAuthSx = False
     spchAuthFx = False
+    intruderFlag = False
+
+    now = datetime.now()
+    flag_dt_format = now.strftime("%m/%d/%Y, %H:%M:%S")
     
     while(1):
         recog = sr.Recognizer()

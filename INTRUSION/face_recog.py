@@ -68,6 +68,7 @@ def faceRecog():
                 for i in matchedIdxs:
                     #Check the names at respective indexes we stored in matchedIdxs
                     name = face_names[i]
+                    print(name)
                     #increase count for the name we got
                     counts[name] = counts.get(name, 0) + 1
                     print(counts)
