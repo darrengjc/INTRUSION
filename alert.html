@@ -1,0 +1,28 @@
+<!-- <html>
+  <head>
+    <title>Ice Cream Picker</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+  </head>
+  <body>
+    <py-config>
+        [[fetch]]
+        files = ["face_recog.py"]
+        from = "./"
+        to_folder = 'package'
+    </py-config>
+    <py-script>
+  from package.import face_recog
+  if face_recog.intruderFlag:
+      print("Intruder Alert")
+      intruder_img = face_recog.intruders[0]
+      document.querySelector("img").setAttribute("src", intruder_img)
+      stringMsg = "INTRUDER DETECTED! Time of Intrusion:{}".format(face_recog.intruderFlag_DT)
+        
+    </py-script>
+    <div id="graph-area"></div>
+    <div><img id ="img" src="src"></div>
+    <p>test</p>
+</body>
+</html> -->

@@ -3,8 +3,10 @@ import face_recog
 from PIL import Image
 
 app = Flask(__name__)
+app.debug = False
 
 @app.route('/')
+
 def index():
    if face_recog.intruderFlag:
       print("Intruder Alert")

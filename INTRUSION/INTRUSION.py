@@ -4,7 +4,22 @@ import face_register
 import speech_recog
 import json
 import alert
+import threading
+from plyer import notification
+from pushbullet import Pushbullet
 
+access_token = "o.Go4S3Kfaf4WpG8m09MxEdpec7fYadQ6j"
+
+pb = Pushbullet(access_token)
+
+# import webbrowser
+# new = 2
+
+###1 spoken code can be a random weekly generation code. Sent to user via sms every week.
+###2 Add cryptographic encryption to json file 
+##https://towardsdatascience.com/encrypt-and-decrypt-files-using-python-python-programming-pyshark-a67774bbf9f4
+###3 optional add machine learning to voice recognition
+##https://www.kaggle.com/code/tduan007/voice-recognition
 # set main theme
 customtkinter.set_appearance_mode("dark")  
 customtkinter.set_default_color_theme("dark-blue")  
@@ -37,7 +52,7 @@ def frcButton_callback():
         print(face_recog.name)
         frcButton.configure(state="disabled")
         response_entry.insert("0.0","AuthSuccess. Proceed to SPEECH ID.\n\n\n\n")
-
+        
     if face_recog.AuthFail:
         frcButton.configure(state="enabled")
         response_entry.insert("0.0","AuthFail. Please try again.\n\n\n\n")
@@ -49,7 +64,18 @@ def frcButton_callback():
             intro_label.configure(text="INTRUDER DETECTED")
             spchButton.pack_forget()
             frcButton.pack_forget()
-            alert.app.run()
+            # url = "file:///E:/SIM/Y3S2/INTRUSION/INTRUSION/alert.html"
+            # webbrowser.open(url,new=new)
+            # call alert app as thread so we can parallel process the two programs
+            threading.Thread(target=lambda: alert.app.run(debug=False, use_reloader=False)).start()
+            # throw desktop notification
+            notification.notify(
+                title = 'Intruder Detected',
+                message = face_recog.intruderFlag_DT,
+                app_icon = None,
+                timeout = 10,
+            )
+            pb.push_note("INTRUDER ALERT", face_recog.intruderFlag_DT)
 
 # speech button callback: Run when speech button is clicked.
 def spchButton_callback():
