@@ -2,8 +2,41 @@ import speech_recognition as sr
 import pyttsx3
 import face_recog
 from datetime import datetime
+import pandas as pd
+import random
+from pushbullet import Pushbullet
 
 spchAuthFxCnt = 0
+
+# speech code OTP
+def renewCode(token):
+    pb = Pushbullet(token)
+
+    # date delta
+    with open("../INTRUSION/INTRUSION/dateChecker.txt", 'r') as file:
+        last_date = datetime.strptime(file.read(), "%d-%m-%y")
+        now_date = datetime.now()
+        d1 = pd.to_datetime(now_date).date()
+        d2 = pd.to_datetime(last_date).date()
+        print(d1)
+        print(d2)
+        deltaDate = d1-d2
+        d3 = deltaDate.days
+        print(d3)
+
+        #renew the speech OTP code every day or every time and send to user via bullet notification.
+        #this code is designed to be an adjustable-time OTP renewal
+        if d3 == 0:
+            #instantiate speech code file on the spot and destroy after
+            with open("../INTRUSION/INTRUSION/speechCode.txt", 'w') as file:
+                speechCode = random.randint(1000,3000)
+                file.write(str(speechCode))
+
+            pb.push_note("Your Speech Code OTP Is:", str(speechCode))
+            with open("../INTRUSION/INTRUSION/dateChecker.txt", 'w') as file:
+                file.write(datetime.now().strftime("%d-%m-%y"))
+
+
 
 # convert text to speech
 def SpeakText(command):
@@ -19,16 +52,10 @@ def codeVerify():
     global spchAuthSx
     global spchAuthFx
     global spchAuthFxCnt
-    global intruderFlag_DT
-    global intruderFlag
 
     spchSuccess = False
     spchAuthSx = False
     spchAuthFx = False
-    intruderFlag = False
-
-    now = datetime.now()
-    flag_dt_format = now.strftime("%m/%d/%Y, %H:%M:%S")
     
     while(1):
         recog = sr.Recognizer()
@@ -44,7 +71,10 @@ def codeVerify():
 
         print("Code Received: ", audioText)
 
-        if audioText == "1356":
+        with open("../INTRUSION/INTRUSION/speechCode.txt", 'r') as file:
+            speechCode = file.read()
+
+        if audioText == speechCode:
             spchSuccess = True
             print(spchSuccess)
         else: 

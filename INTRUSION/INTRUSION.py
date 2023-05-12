@@ -14,53 +14,65 @@ import os
 access_token = "o.Go4S3Kfaf4WpG8m09MxEdpec7fYadQ6j"
 pb = Pushbullet(access_token)
 
-def keySet():
 #fernet key generation for encryption setting
+def keySet():
     key = Fernet.generate_key()
+
     with open("../INTRUSION/INTRUSION/encKey.key", "wb") as keyFile:
             keyFile.write(key)
 
+#load the fernet key
 def keyLoad():
     return open("../INTRUSION/INTRUSION/encKey.key", "rb").read()
 
+#encrypt the user data file with fernet key
+
 def encryptFile(key):
     encKey = Fernet(key)
+
     with open("../INTRUSION/INTRUSION/userList.json", "rb") as file:
-        # read all file data
         file_data = file.read()
 
     encrypted_data = encKey.encrypt(file_data)
+
     with open("../INTRUSION/INTRUSION/encryptedList.json", "wb") as file:
         file.write(encrypted_data)
 
+#decrypt the user data file with fernet key
 def decryptFile(key):
     dncKey = Fernet(key)
+
     with open("../INTRUSION/INTRUSION/encryptedList.json", "rb") as file:
-    # read the encrypted data
         encrypted_data = file.read()
-    # decrypt data
+
     decrypted_data = dncKey.decrypt(encrypted_data)
-    # write the original file
+
     with open("../INTRUSION/INTRUSION/userList.json", "wb") as file:
         file.write(decrypted_data)
 
+# clear userlist json file
 def destroyUsrLst():
     if os.path.exists("../INTRUSION/INTRUSION/userList.json"):
         os.remove("../INTRUSION/INTRUSION/userList.json")
+
+# clear speech code file
+def destroySpchCode():
+    if os.path.exists("../INTRUSION/INTRUSION/speechCode.txt"):
+        os.remove("../INTRUSION/INTRUSION/speechCode.txt")
+
 #keySet()
+# preload the key
 key = keyLoad()
 # decryptFile(key)
 # encryptFile(key)
 # exit()
 
-# import webbrowser
-# new = 2
-
 ###1 spoken code can be a random weekly generation code. Sent to user via phone notification every week.
-###2 Add cryptographic encryption to json file 
+###2 Add cryptographic encryption to json file (DONE)
 ##https://towardsdatascience.com/encrypt-and-decrypt-files-using-python-python-programming-pyshark-a67774bbf9f4
 ###3 optional add machine learning to voice recognition
 ##https://www.kaggle.com/code/tduan007/voice-recognition
+
 # set main theme
 customtkinter.set_appearance_mode("dark")  
 customtkinter.set_default_color_theme("dark-blue")  
@@ -93,7 +105,9 @@ def frcButton_callback():
         print(face_recog.name)
         frcButton.configure(state="disabled")
         response_entry.insert("0.0","AuthSuccess. Proceed to SPEECH ID.\n\n\n\n")
-        
+        # on successful face detection; run the speech code OTP function
+        speech_recog.renewCode(access_token)
+
     if face_recog.AuthFail:
         frcButton.configure(state="enabled")
         response_entry.insert("0.0","AuthFail. Please try again.\n\n\n\n")
@@ -105,10 +119,7 @@ def frcButton_callback():
             intro_label.configure(text="INTRUDER DETECTED")
             spchButton.pack_forget()
             frcButton.pack_forget()
-
-            # url = "file:///E:/SIM/Y3S2/INTRUSION/INTRUSION/alert.html"
-            # webbrowser.open(url,new=new)
-
+            
             # call alert app as thread so we can parallel process the two programs
             threading.Thread(target=lambda: alert.app.run(debug=False, use_reloader=False)).start()
 
@@ -138,6 +149,8 @@ def spchButton_callback():
         mainWindow.geometry("300x200")
         response_entry.configure(text_color="blue", border_color="blue")
         response_entry.insert("0.0","ENTRY GRANTED\n\n\n\n")
+        # do not retain the speechCode file
+        destroySpchCode()
 
     # speech recognition fail flag check and count check till app lock
     if speech_recog.spchAuthFx:
@@ -150,6 +163,7 @@ def spchButton_callback():
             intro_label.configure(text="INTRUDER DETECTED")
             spchButton.pack_forget()
             frcButton.pack_forget()
+            destroySpchCode()
 
 # login button callback: Run when login button is clicked.
 def login_callback():
