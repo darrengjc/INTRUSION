@@ -119,9 +119,6 @@ def frcButton_callback():
             intro_label.configure(text="INTRUDER DETECTED")
             spchButton.pack_forget()
             frcButton.pack_forget()
-            
-            # call alert app as thread so we can parallel process the two programs
-            threading.Thread(target=lambda: alert.app.run(debug=False, use_reloader=False)).start()
 
             # throw desktop notification
             notification.notify(
@@ -309,5 +306,6 @@ response_entry.pack(pady=10, padx=10)
 # initialize main
 if __name__=='__main__':
     destroyUsrLst()
+    threading.Thread(target=lambda: alert.app.run(debug=False, use_reloader=False)).start()
     mainWindow.mainloop()
     destroyUsrLst()

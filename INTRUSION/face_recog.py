@@ -2,10 +2,15 @@ import face_recognition
 import cv2
 import os
 import json
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 from pathlib import Path
 from datetime import datetime
 
 AuthFailCount = 0
+intruderFlag = False
 
 def faceRecog():
     now = datetime.now()
@@ -16,11 +21,16 @@ def faceRecog():
     global name
     global AuthFail
     global AuthFailCount
-    global intruderFlag
     global intruders
     global intruderFlag_DT
+<<<<<<< Updated upstream
 
     intruderFlag = False
+=======
+    global face_dist_flag
+    global intruderFlag
+    
+>>>>>>> Stashed changes
     AuthFail = False
     detection = False
     intruders = []
@@ -58,6 +68,7 @@ def faceRecog():
 
         # Loop through each face in this frame of video
         for (top, right, bottom, left), face_encoding in zip(face_locations, face_encodings):
+<<<<<<< Updated upstream
             # See if the face is a match for the known face(s)
             matches = face_recognition.compare_faces(face_encs, face_encoding)
 
@@ -83,6 +94,44 @@ def faceRecog():
                 AuthFail = True
                 detection = False
                 break
+=======
+            # Calculate the center of the detected face
+            face_center = (top + bottom) // 2, (left + right) // 2
+
+            # Calculate the distance of the face from the camera position (you can use any appropriate distance metric)
+            face_dist = euclidean_distances([face_center], [(frame.shape[0] // 2, frame.shape[1] // 2)])[0][0]
+
+            if face_dist > 0 and face_dist < 70:
+                face_dist_flag = True
+                name = "Too Far"
+                
+            if face_dist_flag == False:
+                # See if the face is a match for the known face(s)
+                matches = face_recognition.compare_faces(face_encs, face_encoding)
+
+                # If a match was found in face_encs, just use the first one.
+                if True in matches:
+                    matchedIdxs = [i for (i, b) in enumerate(matches) if b]
+                    counts = {}
+                    for i in matchedIdxs:
+                        # Check the names at respective indexes we stored in matchedIdxs
+                        name = face_names[i]
+                        print(name)
+                        # Increase count for the name we got
+                        counts[name] = counts.get(name, 0) + 1
+                        print(counts)
+                    # Set name which has the highest count
+                    name = max(counts, key=counts.get)
+                    detection = True
+                    print(name, matches)
+                    break
+
+                if False in matches:
+                    name = "Unknown"
+                    AuthFail = True
+                    detection = False
+                    break
+>>>>>>> Stashed changes
 
             # Draw a box around the face
             cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
