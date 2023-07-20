@@ -2,12 +2,12 @@ import face_recognition
 import cv2
 import os
 import json
-
 from pathlib import Path
 from datetime import datetime
 from sklearn.metrics.pairwise import euclidean_distances
 
 AuthFailCount = 0
+intruderFlag = False
 
 def faceRecog():
     now = datetime.now()
@@ -18,17 +18,13 @@ def faceRecog():
     global name
     global AuthFail
     global AuthFailCount
-    global intruderFlag
     global intruders
     global intruderFlag_DT
     global face_dist_flag
-
-    intruderFlag = False
+    global intruderFlag
+    
     AuthFail = False
     detection = False
-    face_dist_flag = False
-    name = "Unknown"  # Initialize the name variable
-
     intruders = []
     flag_dt_format = now.strftime("%m/%d/%Y, %H:%M:%S")
 
@@ -38,7 +34,7 @@ def faceRecog():
     face_names = []
 
     # sorting paths by creation date
-    sortedPath = sorted(Path(directory).iterdir(), key=os.path.getctime)
+    sortedPath = sorted(Path(directory).iterdir(),key=os.path.getctime)
     print(sortedPath)
 
     # load the sorted paths for encoding list
@@ -48,7 +44,7 @@ def faceRecog():
         face_encs.append(faceEnc)
     print(face_encs)
 
-    with open("../INTRUSION/INTRUSION/userList.json", 'r') as f:
+    with open("../INTRUSION/INTRUSION/userList.json",'r') as f:
         userData = json.loads(f.read())
         for i in userData:
             face_names.append(i)
@@ -62,8 +58,6 @@ def faceRecog():
         face_locations = face_recognition.face_locations(frame)
         face_encodings = face_recognition.face_encodings(frame, face_locations)
 
-        face_dist_flag = False  # Reset the flag
-
         # Loop through each face in this frame of video
         for (top, right, bottom, left), face_encoding in zip(face_locations, face_encodings):
             # Calculate the center of the detected face
@@ -75,8 +69,10 @@ def faceRecog():
             if face_dist > 0 and face_dist < 70:
                 face_dist_flag = True
                 name = "Too Far"
+                print(face_dist)
                 
-            if face_dist_flag == False:
+            if face_dist > 70:
+                face_dist_flag = False
                 # See if the face is a match for the known face(s)
                 matches = face_recognition.compare_faces(face_encs, face_encoding)
 
@@ -116,14 +112,14 @@ def faceRecog():
 
         # On detect, break
         if cv2.waitKey(1) & detection:
-            # if detection:
+        #if detection:
             break
 
         if AuthFail:
             print("AuthFail. Unauthorized User.")
             AuthFailCount += 1
             print("Number of tries: ", AuthFailCount)
-            if AuthFailCount > 2:
+            if AuthFailCount >2:
                 intruderFlag = True
                 intruderFlag_DT = flag_dt_format
                 print("Capturing Intruder Image")
@@ -133,10 +129,9 @@ def faceRecog():
                 print("{} captured".format(intruders))
                 return intruderFlag
             break
-                
+
     # Release handle to the webcam
     video_capture.release()
     cv2.destroyAllWindows()
 
     print("Person detected is: ", name)
-

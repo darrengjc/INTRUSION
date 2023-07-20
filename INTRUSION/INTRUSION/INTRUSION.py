@@ -11,7 +11,7 @@ from cryptography.fernet import Fernet
 import os
 
 #push bullet user APi and initializer
-access_token = "o.wrlwniJb4m2P9Fj2piQ0Agsa6RPBBI0L"
+access_token = "o.Go4S3Kfaf4WpG8m09MxEdpec7fYadQ6j"
 pb = Pushbullet(access_token)
 
 #fernet key generation for encryption setting
@@ -26,6 +26,7 @@ def keyLoad():
     return open("../INTRUSION/INTRUSION/encKey.key", "rb").read()
 
 #encrypt the user data file with fernet key
+
 def encryptFile(key):
     encKey = Fernet(key)
 
@@ -54,7 +55,7 @@ def destroyUsrLst():
     if os.path.exists("../INTRUSION/INTRUSION/userList.json"):
         os.remove("../INTRUSION/INTRUSION/userList.json")
 
-# clear speech OTP code file
+# clear speech code file
 def destroySpchCode():
     if os.path.exists("../INTRUSION/INTRUSION/speechCode.txt"):
         os.remove("../INTRUSION/INTRUSION/speechCode.txt")
@@ -65,6 +66,12 @@ key = keyLoad()
 # decryptFile(key)
 # encryptFile(key)
 # exit()
+
+###1 spoken code can be a random weekly generation code. Sent to user via phone notification every week.
+###2 Add cryptographic encryption to json file (DONE)
+##https://towardsdatascience.com/encrypt-and-decrypt-files-using-python-python-programming-pyshark-a67774bbf9f4
+###3 optional add machine learning to voice recognition
+##https://www.kaggle.com/code/tduan007/voice-recognition
 
 # set main theme
 customtkinter.set_appearance_mode("dark")  
@@ -92,9 +99,6 @@ def frcButton_callback():
     # call facial recognition function from facial recognition module
     face_recog.faceRecog()
 
-    if face_recog.face_dist_flag:
-        response_entry.insert("0.0","Face is too far, please come nearer.\n\n\n\n")
-
     if face_recog.detection:
         spchButton.configure(state="enabled") 
         print("AuthSuccess")
@@ -115,9 +119,6 @@ def frcButton_callback():
             intro_label.configure(text="INTRUDER DETECTED")
             spchButton.pack_forget()
             frcButton.pack_forget()
-            
-            # call alert app as thread so we can parallel process the two programs
-            threading.Thread(target=lambda: alert.app.run(debug=False, use_reloader=False)).start()
 
             # throw desktop notification
             notification.notify(
@@ -305,5 +306,6 @@ response_entry.pack(pady=10, padx=10)
 # initialize main
 if __name__=='__main__':
     destroyUsrLst()
+    threading.Thread(target=lambda: alert.app.run(debug=False, use_reloader=False)).start()
     mainWindow.mainloop()
     destroyUsrLst()
