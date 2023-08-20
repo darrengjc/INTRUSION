@@ -12,7 +12,7 @@ intruderFlag = False
 def faceRecog():
     now = datetime.now()
     date_time = now.strftime("%m%d%Y_%H%M%S")
-    directory = '../INTRUSION/INTRUSION/Images/'
+    directory = '../INTRUSION/INTRUSION/INTRUSION/Images/'
 
     global detection
     global name
@@ -44,7 +44,7 @@ def faceRecog():
         face_encs.append(faceEnc)
     print(face_encs)
 
-    with open("../INTRUSION/INTRUSION/userList.json",'r') as f:
+    with open("../INTRUSION/INTRUSION/INTRUSION/userList.json",'r') as f:
         userData = json.loads(f.read())
         for i in userData:
             face_names.append(i)
@@ -123,7 +123,7 @@ def faceRecog():
                 intruderFlag = True
                 intruderFlag_DT = flag_dt_format
                 print("Capturing Intruder Image")
-                newIntruder = "../INTRUSION/INTRUSION/IntruderImgs/intruder_flag_{}.png".format(date_time)
+                newIntruder = "../INTRUSION/INTRUSION/INTRUSION/IntruderImgs/intruder_flag_{}.png".format(date_time)
                 intruders.append(newIntruder)
                 cv2.imwrite(newIntruder, frame)
                 print("{} captured".format(intruders))

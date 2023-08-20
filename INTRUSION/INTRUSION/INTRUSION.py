@@ -18,47 +18,47 @@ pb = Pushbullet(access_token)
 def keySet():
     key = Fernet.generate_key()
 
-    with open("../INTRUSION/INTRUSION/encKey.key", "wb") as keyFile:
+    with open("../INTRUSION/INTRUSION/INTRUSION/encKey.key", "wb") as keyFile:
             keyFile.write(key)
 
 #load the fernet key
 def keyLoad():
-    return open("../INTRUSION/INTRUSION/encKey.key", "rb").read()
+    return open("../INTRUSION/INTRUSION/INTRUSION/encKey.key", "rb").read()
 
 #encrypt the user data file with fernet key
 
 def encryptFile(key):
     encKey = Fernet(key)
 
-    with open("../INTRUSION/INTRUSION/userList.json", "rb") as file:
+    with open("../INTRUSION/INTRUSION/INTRUSION/userList.json", "rb") as file:
         file_data = file.read()
 
     encrypted_data = encKey.encrypt(file_data)
 
-    with open("../INTRUSION/INTRUSION/encryptedList.json", "wb") as file:
+    with open("../INTRUSION/INTRUSION/INTRUSION/encryptedList.json", "wb") as file:
         file.write(encrypted_data)
 
 #decrypt the user data file with fernet key
 def decryptFile(key):
     dncKey = Fernet(key)
 
-    with open("../INTRUSION/INTRUSION/encryptedList.json", "rb") as file:
+    with open("../INTRUSION/INTRUSION/INTRUSION/encryptedList.json", "rb") as file:
         encrypted_data = file.read()
 
     decrypted_data = dncKey.decrypt(encrypted_data)
 
-    with open("../INTRUSION/INTRUSION/userList.json", "wb") as file:
+    with open("../INTRUSION/INTRUSION/INTRUSION/userList.json", "wb") as file:
         file.write(decrypted_data)
 
 # clear userlist json file
 def destroyUsrLst():
-    if os.path.exists("../INTRUSION/INTRUSION/userList.json"):
-        os.remove("../INTRUSION/INTRUSION/userList.json")
+    if os.path.exists("../INTRUSION/INTRUSION/INTRUSION/userList.json"):
+        os.remove("../INTRUSION/INTRUSION/INTRUSION/userList.json")
 
 # clear speech code file
 def destroySpchCode():
-    if os.path.exists("../INTRUSION/INTRUSION/speechCode.txt"):
-        os.remove("../INTRUSION/INTRUSION/speechCode.txt")
+    if os.path.exists("../INTRUSION/INTRUSION/INTRUSION/speechCode.txt"):
+        os.remove("../INTRUSION/INTRUSION/INTRUSION/speechCode.txt")
 
 #keySet()
 # preload the key
@@ -167,7 +167,7 @@ def login_callback():
     print("password entered", pass_entry.get())
     decryptFile(key)
     
-    uf = open("../INTRUSION/INTRUSION/userList.json")
+    uf = open("../INTRUSION/INTRUSION/INTRUSION/userList.json")
     # load passes from json
     userData = json.load(uf)
     userPasses = userData.values()
@@ -235,12 +235,12 @@ def face_regis_callback():
 def submit_regis_callback():
     decryptFile(key)
     # save the user input fields into json file
-    with open("../INTRUSION/INTRUSION/userList.json",'r') as f:
+    with open("../INTRUSION/INTRUSION/INTRUSION/userList.json",'r') as f:
         userData = json.loads(f.read())
 
     userData[name_set.get()] = pass_set.get()
 
-    with open("../INTRUSION/INTRUSION/userList.json", 'w') as f:
+    with open("../INTRUSION/INTRUSION/INTRUSION/userList.json", 'w') as f:
         f.write(json.dumps(userData,sort_keys=False, indent=4, separators=(',', ': ')))
 
     encryptFile(key)

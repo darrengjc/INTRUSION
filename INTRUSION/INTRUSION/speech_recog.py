@@ -13,7 +13,7 @@ def renewCode(token):
     pb = Pushbullet(token)
 
     # date delta
-    with open("../INTRUSION/INTRUSION/dateChecker.txt", 'r') as file:
+    with open("../INTRUSION/INTRUSION/INTRUSION/dateChecker.txt", 'r') as file:
         last_date = datetime.strptime(file.read(), "%d-%m-%y")
         now_date = datetime.now()
         d1 = pd.to_datetime(now_date).date()
@@ -28,12 +28,12 @@ def renewCode(token):
         #this code is designed to be an adjustable-time OTP renewal
         if d3 >= 0:
             #instantiate speech code file on the spot and destroy after
-            with open("../INTRUSION/INTRUSION/speechCode.txt", 'w') as file:
+            with open("../INTRUSION/INTRUSION/INTRUSION/speechCode.txt", 'w') as file:
                 speechCode = random.randint(1000,3000)
                 file.write(str(speechCode))
 
             pb.push_note("Your Speech Code OTP Is:", str(speechCode))
-            with open("../INTRUSION/INTRUSION/dateChecker.txt", 'w') as file:
+            with open("../INTRUSION/INTRUSION/INTRUSION/dateChecker.txt", 'w') as file:
                 file.write(datetime.now().strftime("%d-%m-%y"))
 
 
@@ -71,7 +71,7 @@ def codeVerify():
 
         print("Code Received: ", audioText)
 
-        with open("../INTRUSION/INTRUSION/speechCode.txt", 'r') as file:
+        with open("../INTRUSION/INTRUSION/INTRUSION/speechCode.txt", 'r') as file:
             speechCode = file.read()
 
         if audioText == speechCode:

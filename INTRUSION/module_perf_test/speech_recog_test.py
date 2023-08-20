@@ -12,7 +12,7 @@ ground_truths_ggl = ["the moon is blue", "the alphabet does not exist", "the chi
 ground_truths_vosk = ["the moon is blue", "the alphabet does not exist", "the chicken crosses the road"]
 
 # Initialize the Vosk model for recogVosk
-vosk_model_path = "../INTRUSION/module_perf_test/vosk-model-small-en-us-0.15"
+vosk_model_path = "../INTRUSION/INTRUSION/module_perf_test/vosk-model-small-en-us-0.15"
 vosk_model = vosk.Model(vosk_model_path)
 
 def recogGoogle(audio):
